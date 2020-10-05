@@ -1,28 +1,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:note_app/model/note_for_list.dart';
+import 'package:note_app/service/note_services.dart';
+import 'package:note_app/view/create_note.dart';
+import 'package:note_app/view/note_delete.dart';
 
-class NoteList extends StatelessWidget {
-  final notes = [
-    NoteForLists(
-        noteId: "1",
-        noteTtitle: "Note Title",
-        noteDateTime: DateTime.now(),
-        noteUpdateDateTime: DateTime.now()
-    ),
-    NoteForLists(
-        noteId: "2",
-        noteTtitle: "Note Title",
-        noteDateTime: DateTime.now(),
-        noteUpdateDateTime: DateTime.now()
-    ),
-    NoteForLists(
-        noteId: "3",
-        noteTtitle: "Note Title",
-        noteDateTime: DateTime.now(),
-        noteUpdateDateTime: DateTime.now()
-    )
-  ];
+class NoteList extends StatefulWidget {
+
+  @override
+  _NoteListState createState() => _NoteListState();
+}
+
+class _NoteListState extends State<NoteList> {
+  NoteServices get service = GetIt.I<NoteServices>();
+  List<NoteForLists> notes = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +22,8 @@ class NoteList extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: (){
-          //TODO
+          Route route = MaterialPageRoute(builder: (context)=>CreateNote());
+          Navigator.push(context, route);
         },
       ),
       body: Container(
@@ -38,9 +31,37 @@ class NoteList extends StatelessWidget {
           separatorBuilder: (_,__)=>Divider(height: 1,color: Colors.green,),
           itemCount: notes.length,
           itemBuilder: (_,index){
-            return ListTile(
-              title: Text(notes[index].noteTtitle),
-              subtitle: Text('Note date: ${notes[index].noteDateTime}'),
+            return Dismissible(
+              key: ValueKey(notes[index].noteId),
+              direction: DismissDirection.startToEnd,
+              onDismissed: (direction){
+
+              },
+              confirmDismiss: (direction)async{
+                final result= await showDialog(
+                  context: context,
+                  builder: (_)=>DeleteItem(),
+                );
+                return result;
+              },
+              background: Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(left: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                  icon: Icon(Icons.delete,color: Colors.red,),
+                  ),
+                ),
+              ),
+              child: ListTile(
+                title: Text(notes[index].noteTtitle),
+                subtitle: Text('Note date: ${notes[index].noteDateTime}'),
+                onTap: (){
+                  Route route = MaterialPageRoute(builder: (context)=>CreateNote(noteId: notes[index].noteId,));
+                  Navigator.push(context, route);
+                },
+              ),
             );
           },
         ) ,
