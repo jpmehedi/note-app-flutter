@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:note_app/model/api_response.dart';
 import 'package:note_app/model/note_for_list.dart';
 import 'package:note_app/service/note_services.dart';
 import 'package:note_app/view/create_note.dart';
@@ -12,8 +14,26 @@ class NoteList extends StatefulWidget {
 }
 
 class _NoteListState extends State<NoteList> {
-  NoteServices get service = GetIt.I<NoteServices>();
-  List<NoteForLists> notes = [];
+
+bool isLoading = false;
+    APIReesponse <List<NoteForLists>> _apiResponse;
+  @override
+  void initState() {
+fetchNote();
+    super.initState();
+  }
+  fetchNote(){
+    setState(() {
+      isLoading = true;
+    });
+
+    api
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
